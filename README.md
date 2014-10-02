@@ -16,6 +16,8 @@ dependencies {
 ## RevealColorView
 <img src="https://raw.githubusercontent.com/markushi/android-ui/master/example.gif" width="280px" alt="Sample" />
 
+[Download example apk](example.apk)
+
 Requires API level 14+
 
 A component which mimics parts of the circular reveal/hide animation introduced in Android-L
