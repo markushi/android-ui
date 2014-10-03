@@ -1,4 +1,4 @@
-package at.markushi.ui;
+package at.markushi.ui.util;
 
 import android.graphics.drawable.Drawable;
 import android.os.Build;
