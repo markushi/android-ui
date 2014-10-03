@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 
+import at.markushi.ui.util.BakedBezierInterpolator;
+import at.markushi.ui.util.UiHelper;
+
 public class RevealColorView extends ViewGroup {
 
 	public static final int ANIMATION_REVEAL = 0;
@@ -20,7 +23,6 @@ public class RevealColorView extends ViewGroup {
 
 	private View inkView;
 	private int inkColor;
-
 	private ShapeDrawable circle;
 	private ViewPropertyAnimator animator;
 
@@ -83,9 +85,11 @@ public class RevealColorView extends ViewGroup {
 		circle.getPaint().setColor(color);
 		inkView.setVisibility(View.VISIBLE);
 
-		final float startRadiusAsScale = startRadius * 2f / inkView.getHeight();
-		prepareView(inkView, x, y, startRadiusAsScale);
-		animator = inkView.animate().scaleX(SCALE).scaleY(SCALE).setDuration(duration).setListener(new Animator.AnimatorListener() {
+		final float startScale = startRadius * 2f / inkView.getHeight();
+		final float finalScale = calculateScale(x, y) * SCALE;
+
+		prepareView(inkView, x, y, startScale);
+		animator = inkView.animate().scaleX(finalScale).scaleY(finalScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
 			@Override
 			public void onAnimationStart(Animator animator) {
 				if (listener != null) {
@@ -135,10 +139,12 @@ public class RevealColorView extends ViewGroup {
 		inkView.setVisibility(View.VISIBLE);
 		setBackgroundColor(color);
 
-		prepareView(inkView, x, y, SCALE);
+		final float startScale = calculateScale(x, y) * SCALE;
+		final float finalScale = endRadius * SCALE / inkView.getWidth();
 
-		final float endRadiusAsScale = endRadius * SCALE / inkView.getWidth();
-		animator = inkView.animate().scaleX(endRadiusAsScale).scaleY(endRadiusAsScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
+		prepareView(inkView, x, y, startScale);
+
+		animator = inkView.animate().scaleX(finalScale).scaleY(finalScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
 			@Override
 			public void onAnimationStart(Animator animator) {
 				if (listener != null) {
@@ -176,6 +182,7 @@ public class RevealColorView extends ViewGroup {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			animator.withLayer();
 		}
+		animator.setInterpolator(BakedBezierInterpolator.getInstance());
 		return animator;
 	}
 
@@ -188,5 +195,24 @@ public class RevealColorView extends ViewGroup {
 		view.setPivotY(centerY);
 		view.setScaleX(scale);
 		view.setScaleY(scale);
+	}
+
+	/**
+	 * calculates the required scale of the ink-view to fill the whole view
+	 *
+	 * @param x circle center x
+	 * @param y circle center y
+	 * @return
+	 */
+	private float calculateScale(int x, int y) {
+		final float centerX = getWidth() / 2f;
+		final float centerY = getHeight() / 2f;
+		final float maxDistance = (float) Math.sqrt(centerX * centerX + centerY * centerY);
+
+		final float deltaX = centerX - x;
+		final float deltaY = centerY - y;
+		final float distance = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		final float scale = 0.5f + (distance / maxDistance) * 0.5f;
+		return scale;
 	}
 }
