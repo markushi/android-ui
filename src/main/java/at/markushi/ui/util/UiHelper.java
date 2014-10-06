@@ -14,4 +14,12 @@ public class UiHelper {
 			view.setBackgroundDrawable(d);
 		}
 	}
+
+	public static void postInvalidateOnAnimation(View view) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			view.postInvalidateOnAnimation();
+		} else {
+			view.invalidate();
+		}
+	}
 }
