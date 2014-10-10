@@ -2,7 +2,7 @@
 Android library for UI components.<br />
 Gradle integration:
 
-```
+```groovy
 repositories {
     mavenCentral()
 }
@@ -20,7 +20,7 @@ Requires API level 14+ <br />
 ### ActionView
 <img src="https://raw.githubusercontent.com/markushi/android-ui/master/example-action.gif" alt="ActionView Example" /><br />
 A widget which can dynamically animate between defined Actions.
-```
+```xml
 <at.markushi.ui.ActionView
 	android:id="@+id/action"
 	android:layout_width="56dip"
@@ -30,7 +30,7 @@ A widget which can dynamically animate between defined Actions.
 	app:av_action="drawer"/>
 ```
 You can dynamically change the action with:
-```
+```java
 actionView.setAction(new BackAction(), ActionView.ROTATE_COUNTER_CLOCKWISE);
 ```
 
