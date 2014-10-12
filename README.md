@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.markushi:android-ui:1.2'
+    compile 'com.github.markushi:android-ui:1.2.+'
 }
 ```
 
