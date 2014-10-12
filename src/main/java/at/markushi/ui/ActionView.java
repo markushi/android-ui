@@ -54,7 +54,7 @@ public class ActionView extends View {
 	private Action currentAction;
 	private Action animatedAction;
 
-	private float animationProgress;
+	private float animationProgress = 1f;
 	private float scale;
 	private int padding;
 	private Path path;
@@ -332,13 +332,13 @@ public class ActionView extends View {
 
 	private Action getActionFromEnum(int id) {
 		switch (id) {
-		case 0:
-			return new DrawerAction();
 		case 1:
-			return new BackAction();
+			return new DrawerAction();
 		case 2:
-			return new CloseAction();
+			return new BackAction();
 		case 3:
+			return new CloseAction();
+		case 4:
 			return new PlusAction();
 		}
 
