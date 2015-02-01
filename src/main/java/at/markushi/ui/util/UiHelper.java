@@ -22,4 +22,12 @@ public class UiHelper {
 			view.invalidate();
 		}
 	}
+
+	public static boolean isAttachedToWindow(View view) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			return view.isAttachedToWindow();
+		} else {
+			return view.getHandler() != null;
+		}
+	}
 }
