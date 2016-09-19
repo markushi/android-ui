@@ -1,3 +1,7 @@
+Deprecated
+====================
+This library is deprecated and no further development is taking place.
+
 # android-ui
 Android library for UI components.<br />
 Gradle integration:
