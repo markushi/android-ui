@@ -52,4 +52,4 @@ Please note: ActionView is still under development. The API might change at any 
 A component which mimics parts of the circular reveal/hide animation introduced [in the Android-L preview](http://developer.android.com/preview/material/animations.html#reveal).<br />
 Note: This is not a backport of the original reveal/hide effect. 
 
-See [this example gist](https://gist.github.com/markushi/68ce8df77bed164b6275) on how to use it.
+See [this example gist](https://gist.github.com/markushi/68ce8df77bed164b6275) on how to use it. Additionally, [AndroidUIExample](https://github.com/snxfz947/AndroidUIExample) is an example app with source code that has added features such as: customizable sound effects, added Actions, and documentation for adding your own Actions.
