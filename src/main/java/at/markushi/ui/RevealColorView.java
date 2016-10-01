@@ -1,15 +1,17 @@
 package at.markushi.ui;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
+
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import at.markushi.ui.util.BakedBezierInterpolator;
 import at.markushi.ui.util.UiHelper;
@@ -89,9 +91,17 @@ public class RevealColorView extends ViewGroup {
 		final float finalScale = calculateScale(x, y) * SCALE;
 
 		prepareView(inkView, x, y, startScale);
-		animator = inkView.animate().scaleX(finalScale).scaleY(finalScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
+		animator = ViewPropertyAnimator.animate(inkView).scaleX(finalScale).scaleY(finalScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
+
+			private int layerType;
+
 			@Override
 			public void onAnimationStart(Animator animator) {
+				if (inkView != null) {
+					ViewCompat.setHasTransientState(inkView, true);
+					layerType = ViewCompat.getLayerType(inkView);
+					ViewCompat.setLayerType(inkView, ViewCompat.LAYER_TYPE_HARDWARE, null);
+				}
 				if (listener != null) {
 					listener.onAnimationStart(animator);
 				}
@@ -100,7 +110,11 @@ public class RevealColorView extends ViewGroup {
 			@Override
 			public void onAnimationEnd(Animator animation) {
 				setBackgroundColor(color);
-				inkView.setVisibility(View.INVISIBLE);
+				if (inkView != null) {
+					inkView.setVisibility(View.INVISIBLE);
+					ViewCompat.setLayerType(inkView, layerType, null);
+					ViewCompat.setHasTransientState(inkView, false);
+				}
 				if (listener != null) {
 					listener.onAnimationEnd(animation);
 				}
@@ -144,9 +158,17 @@ public class RevealColorView extends ViewGroup {
 
 		prepareView(inkView, x, y, startScale);
 
-		animator = inkView.animate().scaleX(finalScale).scaleY(finalScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
+		animator = ViewPropertyAnimator.animate(inkView).scaleX(finalScale).scaleY(finalScale).setDuration(duration).setListener(new Animator.AnimatorListener() {
+
+			private int layerType;
+
 			@Override
 			public void onAnimationStart(Animator animator) {
+				if (inkView != null) {
+					ViewCompat.setHasTransientState(inkView, true);
+					layerType = ViewCompat.getLayerType(inkView);
+					ViewCompat.setLayerType(inkView, ViewCompat.LAYER_TYPE_HARDWARE, null);
+				}
 				if (listener != null) {
 					listener.onAnimationStart(animator);
 				}
@@ -154,7 +176,11 @@ public class RevealColorView extends ViewGroup {
 
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				inkView.setVisibility(View.INVISIBLE);
+				if (inkView != null) {
+					inkView.setVisibility(View.INVISIBLE);
+					ViewCompat.setLayerType(inkView, layerType, null);
+					ViewCompat.setHasTransientState(inkView, false);
+				}
 				if (listener != null) {
 					listener.onAnimationEnd(animation);
 				}
@@ -179,9 +205,8 @@ public class RevealColorView extends ViewGroup {
 	}
 
 	public ViewPropertyAnimator prepareAnimator(ViewPropertyAnimator animator, int type) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			animator.withLayer();
-		}
+		// ViewPropertyAnimator.withLayer() is not supported by Jake Wharton's NineOldAndroids,
+		// therefore we handle it inside the specific AnimatorListener.
 		animator.setInterpolator(BakedBezierInterpolator.getInstance());
 		return animator;
 	}
@@ -189,12 +214,14 @@ public class RevealColorView extends ViewGroup {
 	private void prepareView(View view, int x, int y, float scale) {
 		final int centerX = (view.getWidth() / 2);
 		final int centerY = (view.getHeight() / 2);
-		view.setTranslationX(x - centerX);
-		view.setTranslationY(y - centerY);
-		view.setPivotX(centerX);
-		view.setPivotY(centerY);
-		view.setScaleX(scale);
-		view.setScaleY(scale);
+
+		ViewHelper.setTranslationX(view, x - centerX);
+		ViewHelper.setTranslationX(view, x - centerX);
+		ViewHelper.setTranslationY(view, y - centerY);
+		ViewHelper.setPivotX(view, centerX);
+		ViewHelper.setPivotY(view, centerY);
+		ViewHelper.setScaleX(view, scale);
+		ViewHelper.setScaleY(view, scale);
 	}
 
 	/**
